@@ -21,6 +21,7 @@ void setup()
   
   tap.setup(TAP, 200000, 24);
   tap.valueUpdatedHandler(valueChanged);
+  tap.beatHandler(beat);
     
   btn.clickHandler(onTempoClick);
   
@@ -31,7 +32,6 @@ void setup()
 void loop()
 {  
   MIDI.read();  
-  clock();
   
   tap.flush();
   btn.isPressed();
@@ -43,45 +43,27 @@ void onTempoClick(Button &b)
   tap.tap();
 }
 
-unsigned long nextClockTime = 0;
-unsigned long clockDelay = 20000;
-int tickCount = 0;
-int lastAnalog = 0;
-int analog = 0;
-
-
-void clock(){  
-  unsigned long currentTime = micros();  	
-  if(currentTime > nextClockTime)
-  {
-    MIDI.sendRealTime(Clock);
-    
-    nextClockTime = currentTime + clockDelay;
-  
-    tickCount++;
-    if(tickCount == 24)
-    {
-      tickCount = 0;
+void beat(bool mainBeat)
+{
+  MIDI.sendRealTime(Clock);
+ 
+  if(mainBeat)
       digitalWrite(LEDRED, LOW);
-    }
-    else
-    {
-      digitalWrite(LEDRED, HIGH);
-      digitalWrite(LEDTAP, HIGH);
-    }     
-  }
+  else 
+  {
+    digitalWrite(LEDRED, HIGH);
+    digitalWrite(LEDTAP, HIGH);
+  }     
 }
 
 void valueChanged(int val)
 {    
     //Serial.print("New value! ");
     //Serial.println(val, DEC);
-    MIDI.sendRealTime(SystemReset);
     
-    clockDelay = long(val) * 1000 / 24;
-        
-    nextClockTime = micros() + clockDelay;
-    tickCount = 0;
+    MIDI.sendRealTime(Stop);
+    MIDI.sendRealTime(Start);
+    
     digitalWrite(LEDTAP, LOW);
 }
 
