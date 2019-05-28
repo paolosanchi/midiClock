@@ -1,7 +1,7 @@
 midiClock
 =========
 
-An arduino stacth to send a midi clock signal to a midi device. It Implements a tap tempo feature to set the bpm.
+An arduino sketch to send a midi clock signal to a midi device. It Implements a tap tempo feature to set the bpm.
 
 It is implemented using the "MIDI Shield" (search it on google to buy or build your one) and the MIDILibrary. Button.h is used to handle the button press, and a modified version of movingAvg.
 At last it uses TapTempo, that manages the logic to evaluate the bpm, by pressing the button.
